@@ -1,17 +1,48 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <section class="maim">
+      <textarea v-model="content">
+      </textarea>
+    </section>
+    <aside class="preview" v-html="notePreview">
+    </aside>
+
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import marked from "marked"
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    
+  },
+  data(){
+    return{
+      content:"this is notebook"
+    }
+  },
+  computed:{
+    notePreview(){
+      return marked(this.content)
+    }
+  },
+  watch:{
+      content:{
+        handler(val,oldVal){
+          console.log("new val:",val,"\noldVal:",oldVal)
+          this.saveVal(val)
+        }
+    }
+  },
+  methods:{
+    saveVal(val){
+      localStorage.setItem("content",val)
+    }
+  },
+  created(){
+    this.content=localStorage.getItem("content")||"you can write in **markdown**"
   }
 }
 </script>
