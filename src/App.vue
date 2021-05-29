@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <aside class="side-bar">
-      <button class="add-note" v-bind:title="notes.length" @click="addNote">addNote</button>
+      <button class="add-note" v-bind:title="notes.length+'notes created'" @click="addNote">addNote</button>
       <div class="toolbar">
-      <div v-for="note of notes" v-bind:key="note.id" @click="selectNote(note)">
+      <div v-for="note of notes" v-bind:key="note.id" @click="selectNote(note)" v-bind:class="{active:(note===selectedNote)}">
         {{note.title}}
       </div>
       </div>
@@ -30,9 +30,8 @@ export default {
   },
   data(){
     return{
-      content:"this is notebook",
-      notes:[],
-      selectedId:null
+      notes:JSON.parse(localStorage.getItem("notes"))||[],
+      selectedId:JSON.parse(localStorage.getItem("selectedId"))||null
     }
   },
   computed:{
@@ -46,16 +45,24 @@ export default {
     }
   },
   watch:{
-      content:{
-        handler(val,oldVal){
-          console.log("new val:",val,"\noldVal:",oldVal)
-          this.saveVal(val)
-        }
+      notes:{
+        handler(val){
+          this.saveVal(val,"notes");
+          console.log("notes has been saved")
+        },
+        deep:true
+    },
+    selectedId:{
+      handler(val){
+        this.saveVal(val,"selectedId")
+        console.log(val)
+      }
     }
   },
   methods:{
-    saveVal(val){
-      localStorage.setItem("content",val)
+    saveVal(val,name){
+      let a = JSON.stringify(val);
+      localStorage.setItem(name,a)
     },
     addNote(){
       const time=Date.now()
@@ -71,9 +78,6 @@ export default {
     selectNote(note){
       this.selectedId=note.id
     }
-  },
-  created(){
-    this.content=localStorage.getItem("content")||"you can write in **markdown**"
   }
 }
 </script>
@@ -105,6 +109,9 @@ export default {
 .preview{
   flex-grow: 0.4;
   background-color:blue;
+}
+.active{
+  background-color: blue;
 }
 html,body{
   height: 100%;
