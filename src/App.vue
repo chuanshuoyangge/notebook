@@ -3,8 +3,9 @@
     <aside class="side-bar">
       <button class="add-note" v-bind:title="notes.length+'notes created'" @click="addNote">addNote</button>
       <div class="toolbar">
-      <div v-for="note of notes" v-bind:key="note.id" @click="selectNote(note)" v-bind:class="{active:(note===selectedNote)}">
+      <div v-for="note of sortedNotes" v-bind:key="note.id" @click="selectNote(note)" v-bind:class="{active:(note===selectedNote)}">
         {{note.title}}
+        <span @click="favoritenote(note)" :class="{favorite:note.favorite}">☆</span>
       </div>
       </div>
     </aside>
@@ -12,6 +13,7 @@
       <section class="maim">
         <textarea v-model="selectedNote.content">
         </textarea>
+        <span>{{selectedNote.created|date}}</span>
       </section>
       <aside class="preview" v-html="notePreview">
       </aside>
@@ -42,6 +44,9 @@ export default {
       return this.notes.find(a=> {
         return a.id===this.selectedId
       })
+    },
+    sortedNotes(){
+      return this.notes.slice().sort((a,b) => a.favorite === b.favorite ? false : !a.favorite)
     }
   },
   watch:{
@@ -77,6 +82,9 @@ export default {
     },
     selectNote(note){
       this.selectedId=note.id
+    },
+    favoritenote(note){
+      note.favorite = !note.favorite;
     }
   }
 }
@@ -112,6 +120,9 @@ export default {
 }
 .active{
   background-color: blue;
+}
+.favorite{
+  background-color: red;
 }
 html,body{
   height: 100%;
