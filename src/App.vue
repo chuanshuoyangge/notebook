@@ -46,7 +46,7 @@ export default {
       })
     },
     sortedNotes(){
-      return this.notes.slice().sort((a,b) => a.favorite === b.favorite ? false : !a.favorite)
+      return this.notes.slice().sort((a,b) => a.favorite === b.favorite ? 0 : ( b.favorite==true ? 1 : -1 ) )
     }
   },
   watch:{
